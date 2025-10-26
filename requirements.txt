@@ -1,0 +1,10 @@
+evidently==0.3.1
+lightgbm==3.3.5
+matplotlib==3.7.1
+numpy==1.23.5
+pandas==2.0.3
+pytest==7.3.2
+scikit_learn==1.2.2
+seaborn==0.11.2
+shap==0.41.0
+streamlit==1.25.0
