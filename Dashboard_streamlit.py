@@ -14,72 +14,72 @@ from sklearn.preprocessing import MinMaxScaler
 from matplotlib.patches import Arc
 import shap
 
-# Indicateur de risque du client
-#def degree_range(n):
- #   start = np.linspace(0,180,n+1, endpoint=True)[0:-1]
-  #  end = np.linspace(0,180,n+1, endpoint=True)[1::]
-   # mid_points = start + ((end-start)/2.)
-    #return np.c_[start, end], mid_points
+#Indicateur de risque du client
+def degree_range(n):
+    start = np.linspace(0,180,n+1, endpoint=True)[0:-1]
+    end = np.linspace(0,180,n+1, endpoint=True)[1::]
+    mid_points = start + ((end-start)/2.)
+    return np.c_[start, end], mid_points
 
-#def rot_text(ang):
- #   rotation = np.degrees(np.radians(ang) * np.pi / np.pi - np.radians(90))
-    #return rotation
+def rot_text(ang):
+    rotation = np.degrees(np.radians(ang) * np.pi / np.pi - np.radians(90))
+    return rotation
 
-#def gauge(arrow=0.4, labels=['Faible', 'Modéré', 'Elevé', 'Très élevé'],
- #         title='', min_val=0, max_val=100, threshold=-1.0,
-  #        colors='RdYlGn_r', n_colors=-1, ax=None, figsize=(2, 1.3)):
-   # N = len(labels)
-    #n_colors = n_colors if n_colors > 0 else N
-    #if isinstance(colors, str):
-        #cmap = cm.get_cmap(colors, n_colors)
-        #cmap = cmap(np.arange(n_colors))
-        #colors = cmap[::-1]
-    #if isinstance(colors, list):
-        #n_colors = len(colors)
-    #if ax is None:
-        #fig, ax = plt.subplots(figsize=figsize)
+def gauge(arrow=0.4, labels=['Faible', 'Modéré', 'Elevé', 'Très élevé'],
+          title='', min_val=0, max_val=100, threshold=-1.0,
+          colors='RdYlGn_r', n_colors=-1, ax=None, figsize=(2, 1.3)):
+    N = len(labels)
+    n_colors = n_colors if n_colors > 0 else N
+    if isinstance(colors, str):
+        cmap = cm.get_cmap(colors, n_colors)
+        cmap = cmap(np.arange(n_colors))
+        colors = cmap[::-1]
+    if isinstance(colors, list):
+        n_colors = len(colors)
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
 
-    #ang_range, _ = degree_range(n_colors)
+    ang_range, _ = degree_range(n_colors)
 
-    #for ang, c in zip(ang_range, colors):
-        #ax.add_patch(Wedge((0., 0.), .4, *ang, width=0.10, facecolor='w', lw=2, alpha=0.5))
-        #ax.add_patch(Wedge((0., 0.), .4, *ang, width=0.10, facecolor=c, lw=0, alpha=0.8))
+    for ang, c in zip(ang_range, colors):
+        ax.add_patch(Wedge((0., 0.), .4, *ang, width=0.10, facecolor='w', lw=2, alpha=0.5))
+        ax.add_patch(Wedge((0., 0.), .4, *ang, width=0.10, facecolor=c, lw=0, alpha=0.8))
 
-    #_, mid_points = degree_range(N)
-    #labels = labels[::-1]
-    #a = 0.45
-    #for mid, lab in zip(mid_points, labels):
-        #ax.text(a * np.cos(np.radians(mid)), a * np.sin(np.radians(mid)), lab, \
-                #horizontalalignment='center', verticalalignment='center', fontsize=12, \
-                #fontweight=None, rotation=rot_text(mid))
+    _, mid_points = degree_range(N)
+    labels = labels[::-1]
+    a = 0.45
+    for mid, lab in zip(mid_points, labels):
+        ax.text(a * np.cos(np.radians(mid)), a * np.sin(np.radians(mid)), lab, \
+                horizontalalignment='center', verticalalignment='center', fontsize=12, \
+                fontweight=None, rotation=rot_text(mid))
 
-    #ax.add_patch(Rectangle((-0.4, -0.1), 0.8, 0.1, facecolor='w', lw=2))
-    #ax.text(0, -0.10, title, horizontalalignment='center', verticalalignment='center', fontsize=20, fontweight='bold')
+    ax.add_patch(Rectangle((-0.4, -0.1), 0.8, 0.1, facecolor='w', lw=2))
+    ax.text(0, -0.10, title, horizontalalignment='center', verticalalignment='center', fontsize=20, fontweight='bold')
 
-    # Seuils de l'indicateur
-    #if threshold > min_val and threshold < max_val:
-        #pos = 180 * (max_val - threshold) / (max_val - min_val)
-        #a = 0.25;
-        #b = 0.18;
-        #x = np.cos(np.radians(pos));
-        #y = np.sin(np.radians(pos))
-        #ax.arrow(a * x, a * y, b * x, b * y, width=0.01, head_width=0.0, head_length=0, ls='--', fc='r', ec='r')
+    #Seuils de l'indicateur
+    if threshold > min_val and threshold < max_val:
+        pos = 180 * (max_val - threshold) / (max_val - min_val)
+        a = 0.25;
+        b = 0.18;
+        x = np.cos(np.radians(pos));
+        y = np.sin(np.radians(pos))
+        ax.arrow(a * x, a * y, b * x, b * y, width=0.01, head_width=0.0, head_length=0, ls='--', fc='r', ec='r')
 
-    # Flèche 
-    #pos = 180 - (180 * (max_val - arrow) / (max_val - min_val))
-    #pos_normalized = (arrow - min_val) / (max_val - min_val)
-    #angle_range = 180
-    #pos_degrees = angle_range * (1 - pos_normalized)
+    #Flèche 
+    pos = 180 - (180 * (max_val - arrow) / (max_val - min_val))
+    pos_normalized = (arrow - min_val) / (max_val - min_val)
+    angle_range = 180
+    pos_degrees = angle_range * (1 - pos_normalized)
 
-    #ax.arrow(0, 0, 0.225 * np.cos(np.radians(pos_degrees)), 0.225 * np.sin(np.radians(pos_degrees)), \
-             #width=0.04, head_width=0.09, head_length=0.1, fc='k', ec='k')
+    ax.arrow(0, 0, 0.225 * np.cos(np.radians(pos_degrees)), 0.225 * np.sin(np.radians(pos_degrees)), \
+             width=0.04, head_width=0.09, head_length=0.1, fc='k', ec='k')
 
-    #ax.add_patch(Circle((0, 0), radius=0.02, facecolor='k'))
-    #ax.set_frame_on(False)
-    #ax.axes.set_xticks([])
-    #ax.axes.set_yticks([])
-    #ax.axis('equal')
-    #return ax
+    ax.add_patch(Circle((0, 0), radius=0.02, facecolor='k'))
+    ax.set_frame_on(False)
+    ax.axes.set_xticks([])
+    ax.axes.set_yticks([])
+    ax.axis('equal')
+    return ax
 
 # Streamlit (v1.25)
 st.set_option('deprecation.showPyplotGlobalUse', False)
@@ -130,11 +130,11 @@ selected_client_cat = df_dashboard_final.loc[index, 'Prédiction crédit']
 df_customer = df_dashboard_final[df_dashboard_final['Prédiction crédit'] == selected_client_cat].copy()
 
 # Affichage de la jauge score client
-#st.subheader('Niveau de risque :')
-#score = client_info['Score client (sur 100)'].values[0]  # Récupérer le score du client
-#fig, ax = plt.subplots(figsize=(5, 3))
-#gauge(arrow=score, ax=ax)  # Appeler la fonction gauge() en passant le score du client
-#st.pyplot(fig)
+st.subheader('Niveau de risque :')
+score = client_info['Score client (sur 100)'].values[0]  # Récupérer le score du client
+fig, ax = plt.subplots(figsize=(5, 3))
+gauge(arrow=score, ax=ax)  # Appeler la fonction gauge() en passant le score du client
+st.pyplot(fig)
 
 # Ecran principal
 st.sidebar.title('Métriques')
@@ -142,36 +142,36 @@ univariate_options = [col for col in df_dashboard_final.columns if col not in ['
 bivariate_options = [col for col in df_dashboard_final.columns if col not in ['ID client', 'Prédiction crédit']]
 
 # Graphique univarié
-#univariate_feature = st.sidebar.selectbox('Variable univariée :', univariate_options)
-#df_customer.replace([np.inf, -np.inf], 0, inplace=True)
-#st.subheader('Analyse univariée (population restreinte) :')
-#plt.figure()
-#plt.hist(df_customer[univariate_feature], color='skyblue', label='Population')
-#plt.xlabel(univariate_feature)
-#plt.axvline(client_info[univariate_feature].values[0], color='salmon', linestyle='--', label='Client sélectionné')
-#plt.legend()
-#st.pyplot(plt.gcf())
+univariate_feature = st.sidebar.selectbox('Variable univariée :', univariate_options)
+df_customer.replace([np.inf, -np.inf], 0, inplace=True)
+st.subheader('Analyse univariée (population restreinte) :')
+plt.figure()
+plt.hist(df_customer[univariate_feature], color='skyblue', label='Population')
+plt.xlabel(univariate_feature)
+plt.axvline(client_info[univariate_feature].values[0], color='salmon', linestyle='--', label='Client sélectionné')
+plt.legend()
+st.pyplot(plt.gcf())
 
 # Graphique bivarié
-#bivariate_feature1 = st.sidebar.selectbox('Variable 1 (bivariée) :', bivariate_options)
-#bivariate_feature2 = st.sidebar.selectbox('Variable 2 (bivariée) :', bivariate_options)
-#st.subheader('Analyse bivariée (population complète) :')
-#plt.figure()
-#sns.scatterplot(data=df_dashboard_final, x=bivariate_feature1, y=bivariate_feature2,
-                #c=df_dashboard_final['Score client'], cmap='viridis',
-                #alpha=0.5, label='Population')
-#sns.scatterplot(data=client_info, x=bivariate_feature1, y=bivariate_feature2,
-                #color='salmon', marker='o', s=100, label='Client sélectionné')
-#plt.xlabel(bivariate_feature1)
-#plt.ylabel(bivariate_feature2)
-#plt.legend()
-#st.pyplot(plt.gcf())
+bivariate_feature1 = st.sidebar.selectbox('Variable 1 (bivariée) :', bivariate_options)
+bivariate_feature2 = st.sidebar.selectbox('Variable 2 (bivariée) :', bivariate_options)
+st.subheader('Analyse bivariée (population complète) :')
+plt.figure()
+sns.scatterplot(data=df_dashboard_final, x=bivariate_feature1, y=bivariate_feature2,
+                c=df_dashboard_final['Score client'], cmap='viridis',
+                alpha=0.5, label='Population')
+sns.scatterplot(data=client_info, x=bivariate_feature1, y=bivariate_feature2,
+                color='salmon', marker='o', s=100, label='Client sélectionné')
+plt.xlabel(bivariate_feature1)
+plt.ylabel(bivariate_feature2)
+plt.legend()
+st.pyplot(plt.gcf())
 
 # Graphique feature importance globale
-#df_sorted = df_feature_importance.sort_values('Features_importance_shapley', ascending=False)
-#plt.figure(figsize=(8, 6))
-#sns.barplot(x='Features_importance_shapley', y='Features', data=df_sorted, color='skyblue')
-#plt.xlabel('Importance SHAP')
-#plt.ylabel('Variable')
-#st.subheader('Importance des variables :')
-#st.pyplot(plt.gcf())
+df_sorted = df_feature_importance.sort_values('Features_importance_shapley', ascending=False)
+plt.figure(figsize=(8, 6))
+sns.barplot(x='Features_importance_shapley', y='Features', data=df_sorted, color='skyblue')
+plt.xlabel('Importance SHAP')
+plt.ylabel('Variable')
+st.subheader('Importance des variables :')
+st.pyplot(plt.gcf())
