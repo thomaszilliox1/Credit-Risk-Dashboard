@@ -14,7 +14,7 @@ from sklearn.preprocessing import MinMaxScaler
 from matplotlib.patches import Arc
 import shap
 
-#Indicateur de risque du client
+# Indicateur de risque du client
 def degree_range(n):
     start = np.linspace(0,180,n+1, endpoint=True)[0:-1]
     end = np.linspace(0,180,n+1, endpoint=True)[1::]
@@ -56,7 +56,7 @@ def gauge(arrow=0.4, labels=['Faible', 'Modéré', 'Elevé', 'Très élevé'],
     ax.add_patch(Rectangle((-0.4, -0.1), 0.8, 0.1, facecolor='w', lw=2))
     ax.text(0, -0.10, title, horizontalalignment='center', verticalalignment='center', fontsize=20, fontweight='bold')
 
-    #Seuils de l'indicateur
+    # Seuils de l'indicateur
     if threshold > min_val and threshold < max_val:
         pos = 180 * (max_val - threshold) / (max_val - min_val)
         a = 0.25;
@@ -65,7 +65,7 @@ def gauge(arrow=0.4, labels=['Faible', 'Modéré', 'Elevé', 'Très élevé'],
         y = np.sin(np.radians(pos))
         ax.arrow(a * x, a * y, b * x, b * y, width=0.01, head_width=0.0, head_length=0, ls='--', fc='r', ec='r')
 
-    #Flèche 
+    # Flèche 
     pos = 180 - (180 * (max_val - arrow) / (max_val - min_val))
     pos_normalized = (arrow - min_val) / (max_val - min_val)
     angle_range = 180
@@ -113,6 +113,41 @@ st.title('Tableau de bord : risque client')
 st.sidebar.title('Client')
 selected_client = st.sidebar.selectbox('Identifiant :', df_dashboard_final['ID client'])
 predict_button = st.sidebar.button('Calculer risque')
+
+import requests  # ajoute tout en haut si ce n’est pas déjà fait
+
+# URL de ton API Render
+API_URL = "https://model-predict-risk-scoring.onrender.com/predict" 
+
+if predict_button:
+    st.subheader("Résultat de la prédiction via l'API Render")
+
+    try:
+        # Préparer la requête JSON avec l'identifiant client
+        payload = {"SK_ID_CURR": int(selected_client)}
+        response = requests.post(API_URL, json=payload)
+
+        # Vérifier la réponse
+        if response.status_code == 200:
+            result = response.json()
+            proba = result["PRED_PROBA"]
+            pred = result["PRED_TARGET"]
+
+            # 3️⃣ Afficher les résultats
+            st.success(f"Client {selected_client} → Risque : {'ÉLEVÉ' if pred == 1 else 'FAIBLE'}")
+            st.metric("Probabilité de défaut", f"{proba*100:.1f} %")
+
+            # 4️⃣ Afficher la jauge avec le score API
+            st.subheader("Indicateur de risque (API)")
+            fig, ax = plt.subplots(figsize=(5, 3))
+            gauge(arrow=proba*100, ax=ax)
+            st.pyplot(fig)
+
+        else:
+            st.error(f"Erreur API : {response.status_code} - {response.text}")
+
+    except Exception as e:
+        st.error(f"⚠️ Erreur de connexion à l'API : {e}")
 
 # Index
 index = df_dashboard_final[df_dashboard_final['ID client'] == selected_client].index[0]
