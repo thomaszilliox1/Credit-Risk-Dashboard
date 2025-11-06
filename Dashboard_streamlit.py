@@ -105,39 +105,40 @@ df_feature_importance = pd.read_csv('df_feature_importance_25.csv')
 df_feature_importance.drop('Unnamed: 0', axis=1, inplace=True)
 df_dashboard_final = pd.read_csv('df_dashboard_final.csv')
 df_dashboard_final.drop('Unnamed: 0', axis=1, inplace=True)
+df_données_dashboard = pd.read_csv('données_dashboard.csv')
 
 # Titre
 st.title('Tableau de bord : risque client')
 
 # Marge
 st.sidebar.title('Client')
-selected_client = st.sidebar.selectbox('Identifiant :', df_dashboard_final['ID client'])
+selected_client = st.sidebar.selectbox('Identifiant :', df_données_dashboard['ID client'])
 predict_button = st.sidebar.button('Calculer risque')
 
-import requests  # ajoute tout en haut si ce n’est pas déjà fait
+import requests  
 
-# URL de ton API Render
+# URL de l'API Render
 API_URL = "https://model-predict-risk-scoring.onrender.com/predict" 
 
 if predict_button:
     st.subheader("Résultat de la prédiction via l'API Render")
 
     try:
-        # Préparer la requête JSON avec l'identifiant client
+        # Prépare la requête JSON avec l'identifiant client
         payload = {"SK_ID_CURR": int(selected_client)}
         response = requests.post(API_URL, json=payload)
 
-        # Vérifier la réponse
+        # Vérifie la réponse
         if response.status_code == 200:
             result = response.json()
             proba = result["PRED_PROBA"]
             pred = result["PRED_TARGET"]
 
-            # 3️⃣ Afficher les résultats
+            # Affiche les résultats
             st.success(f"Client {selected_client} → Risque : {'ÉLEVÉ' if pred == 1 else 'FAIBLE'}")
             st.metric("Probabilité de défaut", f"{proba*100:.1f} %")
 
-            # 4️⃣ Afficher la jauge avec le score API
+            # Affiche la jauge avec le score API
             st.subheader("Indicateur de risque (API)")
             fig, ax = plt.subplots(figsize=(5, 3))
             gauge(arrow=proba*100, ax=ax)
@@ -150,19 +151,19 @@ if predict_button:
         st.error(f"⚠️ Erreur de connexion à l'API : {e}")
 
 # Index
-index = df_dashboard_final[df_dashboard_final['ID client'] == selected_client].index[0]
+index = df_données_dashboard[df_données_dashboard['ID client'] == selected_client].index[0]
 
 # Affichage 
-client_info = df_dashboard_final[df_dashboard_final['ID client'] == selected_client]
+client_info = df_données_dashboard[df_données_dashboard['ID client'] == selected_client]
 st.subheader('Informations sur le client :')
 client_info.index = client_info['ID client']
 st.write(client_info[['Prédiction crédit', 'Score client (sur 100)', 'Type contrat', 'Genre', 'Âge']])
 
 # Prédiction
-selected_client_cat = df_dashboard_final.loc[index, 'Prédiction crédit']
+selected_client_cat = df_données_dashboard.loc[index, 'Prédiction crédit']
 
 # DataFrame prédiction
-df_customer = df_dashboard_final[df_dashboard_final['Prédiction crédit'] == selected_client_cat].copy()
+df_customer = df_données_dashboard[df_données_dashboard['Prédiction crédit'] == selected_client_cat].copy()
 
 # Affichage de la jauge score client
 st.subheader('Niveau de risque :')
