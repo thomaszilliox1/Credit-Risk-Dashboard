@@ -194,7 +194,7 @@ bivariate_feature2 = st.sidebar.selectbox('Variable 2 (bivariée) :', bivariate_
 st.subheader('Analyse bivariée (population complète) :')
 plt.figure()
 sns.scatterplot(data=df_données_dashboard, x=bivariate_feature1, y=bivariate_feature2,
-                c=df_données_dashboard['Score client'], cmap='viridis',
+                c=df_données_dashboard['Score client (sur 100)'], cmap='viridis',
                 alpha=0.5, label='Population')
 sns.scatterplot(data=client_info, x=bivariate_feature1, y=bivariate_feature2,
                 color='salmon', marker='o', s=100, label='Client sélectionné')
