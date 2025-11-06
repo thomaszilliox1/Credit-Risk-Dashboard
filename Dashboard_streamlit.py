@@ -103,8 +103,8 @@ with open('LightGBM_smote_tuned.pckl', 'rb') as f:
 # Data
 df_feature_importance = pd.read_csv('df_feature_importance_25.csv')
 df_feature_importance.drop('Unnamed: 0', axis=1, inplace=True)
-df_dashboard_final = pd.read_csv('df_dashboard_final.csv')
-df_dashboard_final.drop('Unnamed: 0', axis=1, inplace=True)
+#df_dashboard_final = pd.read_csv('df_dashboard_final.csv')
+#df_dashboard_final.drop('Unnamed: 0', axis=1, inplace=True)
 df_données_dashboard = pd.read_csv('donnees_dashboard.csv')
 
 # Titre
