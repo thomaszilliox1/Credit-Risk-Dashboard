@@ -174,8 +174,8 @@ st.pyplot(fig)
 
 # Ecran principal
 st.sidebar.title('Métriques')
-univariate_options = [col for col in df_dashboard_final.columns if col not in ['ID client', 'Prédiction crédit']]
-bivariate_options = [col for col in df_dashboard_final.columns if col not in ['ID client', 'Prédiction crédit']]
+univariate_options = [col for col in df_données_dashboard.columns if col not in ['ID client', 'Prédiction crédit']]
+bivariate_options = [col for col in df_données_dashboard.columns if col not in ['ID client', 'Prédiction crédit']]
 
 # Graphique univarié
 univariate_feature = st.sidebar.selectbox('Variable univariée :', univariate_options)
@@ -193,8 +193,8 @@ bivariate_feature1 = st.sidebar.selectbox('Variable 1 (bivariée) :', bivariate_
 bivariate_feature2 = st.sidebar.selectbox('Variable 2 (bivariée) :', bivariate_options)
 st.subheader('Analyse bivariée (population complète) :')
 plt.figure()
-sns.scatterplot(data=df_dashboard_final, x=bivariate_feature1, y=bivariate_feature2,
-                c=df_dashboard_final['Score client'], cmap='viridis',
+sns.scatterplot(data=df_données_dashboard, x=bivariate_feature1, y=bivariate_feature2,
+                c=df_données_dashboard['Score client'], cmap='viridis',
                 alpha=0.5, label='Population')
 sns.scatterplot(data=client_info, x=bivariate_feature1, y=bivariate_feature2,
                 color='salmon', marker='o', s=100, label='Client sélectionné')
