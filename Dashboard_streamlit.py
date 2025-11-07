@@ -204,10 +204,45 @@ plt.legend()
 st.pyplot(plt.gcf())
 
 # Graphique feature importance globale
-df_sorted = df_feature_importance.sort_values('Features_importance_shapley', ascending=False)
-plt.figure(figsize=(8, 6))
-sns.barplot(x='Features_importance_shapley', y='Features', data=df_sorted, color='skyblue')
-plt.xlabel('Importance SHAP')
-plt.ylabel('Variable')
-st.subheader('Importance des variables :')
-st.pyplot(plt.gcf())
+# df_sorted = df_feature_importance.sort_values('Features_importance_shapley', ascending=False)
+# plt.figure(figsize=(8, 6))
+# sns.barplot(x='Features_importance_shapley', y='Features', data=df_sorted, color='skyblue')
+# plt.xlabel('Importance SHAP')
+# plt.ylabel('Variable')
+# st.subheader('Importance des variables :')
+# st.pyplot(plt.gcf())
+
+
+# -------------------------------
+# Affichage des importances pour le client sélectionné
+# -------------------------------
+
+st.subheader(f"Feature Importances pour le client {selected_client}")
+
+# Sélection du client dans le dataframe
+df_selected = df_feature_importance[df_feature_importance['ID client'] == selected_client]
+
+if not df_selected.empty:
+    # Colonnes des features (exclure 'ID client')
+    feature_cols = [col for col in df_feature_importance.columns if col != 'ID client']
+
+    # Récupérer les valeurs d'importance
+    importances = df_selected[feature_cols].iloc[0].values.astype(float)
+
+    # Top N features à afficher
+    top_n = 10
+    indices = np.argsort(importances)[-top_n:][::-1]  # indices des top N valeurs
+    features_top = [feature_cols[i] for i in indices]
+    importances_top = importances[indices]
+
+    # Tracer le barplot
+    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.barplot(x=features_top, y=importances_top, palette='viridis', ax=ax)
+    ax.set_ylabel("Importance")
+    ax.set_xlabel("Feature")
+    ax.set_title(f"Top {top_n} Feature Importances pour le client {selected_client}")
+    plt.xticks(rotation=45)
+    st.pyplot(fig)
+
+else:
+    st.warning(f"Aucune donnée pour le client {selected_client}")
