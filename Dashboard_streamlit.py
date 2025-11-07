@@ -237,7 +237,7 @@ if not df_selected.empty:
 
     # Tracer le barplot
     fig, ax = plt.subplots(figsize=(10, 5))
-    sns.barplot(x=features_top, y=importances_top, palette='viridis', ax=ax)
+    sns.barplot(x=importances_top, y=features_top, palette='viridis', ax=ax)
     ax.set_ylabel("Importance")
     ax.set_xlabel("Feature")
     ax.set_title(f"Top {top_n} Feature Importances pour le client {selected_client}")
