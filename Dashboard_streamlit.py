@@ -174,8 +174,8 @@ st.pyplot(fig)
 
 # Ecran principal
 st.sidebar.title('Métriques')
-univariate_options = [col for col in df_données_dashboard.columns if col not in ['ID client', 'Prédiction crédit']]
-bivariate_options = [col for col in df_données_dashboard.columns if col not in ['ID client', 'Prédiction crédit']]
+univariate_options = [col for col in df_données_dashboard.columns if col not in ['ID client', 'Prédiction crédit','TARGET','y_pred']]
+bivariate_options = [col for col in df_données_dashboard.columns if col not in ['ID client', 'Prédiction crédit','TARGET','y_pred']]
 
 # Graphique univarié
 univariate_feature = st.sidebar.selectbox('Variable univariée :', univariate_options)
